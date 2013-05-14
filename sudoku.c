@@ -2,130 +2,151 @@
 #include <stdlib.h>
 #include <string.h>
 #define MAX 9
-
-
-struct cell{
-int value;
-int possible[MAX];
-int nofoundinother[MAX];
-}cell[MAX][MAX];
-
-
-void enterSudoku(FILE *file,char *filename){
-    int i,j;
+struct cell {
+    int value;
+    int possible[MAX];
+    int nofoundinother[MAX];
+} cell[MAX][MAX];
+void enterSudoku(FILE * file, char *filename)
+{
+    int i, j;
     char *str;
-    str=(char*)calloc(4,sizeof(char));
-    file = fopen(filename,"r");
-    for(i=0;i<MAX;i++){
-        for(j=0;j<MAX;j++){
-            fscanf(file,"%d", &cell[i][j].value);
+    str = (char *) calloc(4, sizeof(char));
+    file = fopen(filename, "r");
+    for (i = 0; i < MAX; i++) {
+        for (j = 0; j < MAX; j++) {
+            fscanf(file, "%d", &cell[i][j].value);
         }
     }
     fclose(file);
 }
 
-void displaySudoku(FILE *file,char *filename){
-    int i,j;
-    file = fopen(filename,"w+");
-    for(i=0;i<MAX;i++){
-        for(j=0;j<MAX;j++){
-            if(j == 2 || j == 5 || j == 8){
-                printf("%3d ",cell[i][j].value);}
+void displaySudoku(FILE * file, char *filename)
+{
+    int i, j;
+    file = fopen(filename, "w+");
+    for (i = 0; i < MAX; i++) {
+        for (j = 0; j < MAX; j++) {
+            if (j == 2 || j == 5 || j == 8) {
+                printf("%3d ", cell[i][j].value);
+            }
+
             else {
-                printf("%3d",cell[i][j].value);}
-           
+                printf("%3d", cell[i][j].value);
+            }
         }
         puts("");
-        if(i == 2 || i == 5 || i == 8){
+        if (i == 2 || i == 5 || i == 8) {
             puts("");
         }
     }
-    for(i=0; i<MAX ; i++){
-        for(j=0; j<MAX; j++){
-            fprintf(file, "%d ",cell[i][j].value);
+    for (i = 0; i < MAX; i++) {
+        for (j = 0; j < MAX; j++) {
+            fprintf(file, "%d ", cell[i][j].value);
         }
-        fprintf(file,"\n");
+        fprintf(file, "\n");
     }
     fclose(file);
 }
 
 int chck_sdk()
 {
-    int fail = 0;  // âíà÷àëå ïîëàãàåì, ÷òî â òàáëèöå âñå ÷åòêî
+    int fail = 0;               // Ð²Ð½Ð°Ñ‡Ð°Ð»Ðµ Ð¿Ð¾Ð»Ð°Ð³Ð°ÐµÐ¼, Ñ‡Ñ‚Ð¾ Ð² Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ðµ Ð²ÑÐµ Ñ‡ÐµÑ‚ÐºÐ¾
     int i;
     for (i = 0; i < 9 && !fail; ++i) {
-        int p[9] = {0,}; // 0 ÷èñëà íåò, 1 ÷èñëî åñòü
+        int p[9] = { 0, };      // 0 Ñ‡Ð¸ÑÐ»Ð° Ð½ÐµÑ‚, 1 Ñ‡Ð¸ÑÐ»Ð¾ ÐµÑÑ‚ÑŒ
         int j;
         for (j = 0; j < 9 && !fail; ++j) {
-            if(cell[i][j].value == 0) { continue; }
+            if (cell[i][j].value == 0) {
+                continue;
+            }
             if (p[cell[i][j].value - 1] == 0)
                 p[cell[i][j].value - 1] = 1;
+
             else
-                fail = 1;  // äâà îäèíàêîâûõ ÷èñëà â ñòðîêå
+                fail = 1;       // Ð´Ð²Ð° Ð¾Ð´Ð¸Ð½Ð°ÐºÐ¾Ð²Ñ‹Ñ… Ñ‡Ð¸ÑÐ»Ð° Ð² ÑÑ‚Ñ€Ð¾ÐºÐµ
         }
     }
     int j;
     for (j = 0; j < 9 && !fail; ++j) {
-        int p[9] = {0,};
+        int p[9] = { 0, };
         for (i = 0; i < 9 && !fail; ++i) {
-            if(cell[i][j].value == 0) { continue; }
+            if (cell[i][j].value == 0) {
+                continue;
+            }
             if (p[cell[i][j].value - 1] == 0)
                 p[cell[i][j].value - 1] = 1;
+
             else
-                fail = 1;  // äâà îäèíàêîâûõ ÷èñëà â ñòîëáöå
+                fail = 1;       // Ð´Ð²Ð° Ð¾Ð´Ð¸Ð½Ð°ÐºÐ¾Ð²Ñ‹Ñ… Ñ‡Ð¸ÑÐ»Ð° Ð² ÑÑ‚Ð¾Ð»Ð±Ñ†Ðµ
         }
     }
-    for (i = 0; i < 9 && !fail; i+=3) {
+    for (i = 0; i < 9 && !fail; i += 3) {
         int j;
-        for (j = 0; j < 9 && !fail; j+=3) {
-            int p[9] = {0,};
+        for (j = 0; j < 9 && !fail; j += 3) {
+            int p[9] = { 0, };
             int ik;
-            for (ik = i; ik < i+3 && !fail; ++ik) {
+            for (ik = i; ik < i + 3 && !fail; ++ik) {
                 int jk;
-                for (jk = j; jk < j+3 && !fail; ++jk) {
-                    if(cell[ik][jk].value == 0) { continue; }
+                for (jk = j; jk < j + 3 && !fail; ++jk) {
+                    if (cell[ik][jk].value == 0) {
+                        continue;
+                    }
                     if (p[cell[ik][jk].value - 1] == 0)
                         p[cell[ik][jk].value - 1] = 1;
+
                     else
-                            fail = 1;  // äâà îäèíàêîâûõ ÷èñëà â êâàäðàòå - ñåêòîðå
+                        fail = 1;       // Ð´Ð²Ð° Ð¾Ð´Ð¸Ð½Ð°ÐºÐ¾Ð²Ñ‹Ñ… Ñ‡Ð¸ÑÐ»Ð° Ð² ÐºÐ²Ð°Ð´Ñ€Ð°Ñ‚Ðµ - ÑÐµÐºÑ‚Ð¾Ñ€Ðµ
                 }
             }
         }
     }
-    if (!fail) { return 0; }
-    else { return 1; }
+    if (!fail) {
+        return 0;
+    }
+
+    else {
+        return 1;
+    }
 }
 
-int solveSudoku(FILE *file,int i,int j){
+int solveSudoku(FILE * file, int i, int j)
+{
     int n = 1;
-    while(1)
-    {
-        if(cell[i][j].value != 0)
-        {
-            if((i+1) >= MAX && (j+1) >= MAX)
-            {
+    while (1) {
+        if (cell[i][j].value != 0) {
+            if ((i + 1) >= MAX && (j + 1) >= MAX) {
                 return 0;
             }
-            if((j+1) >= MAX)
-            {
+            if ((j + 1) >= MAX) {
                 i++;
-                j=0;
+                j = 0;
             }
-            else { j++; }
+
+            else {
+                j++;
+            }
         }
-        else { break; }
+
+        else {
+            break;
+        }
     }
-    while(1)
-    {
-        while(1)
-        {
+    while (1) {
+        while (1) {
             cell[i][j].value = n;
             n++;
-            if(chck_sdk() == 0) { break; }
-            if(n>=10) {cell[i][j].value = 0; return 1; }
-
+            if (chck_sdk() == 0) {
+                break;
+            }
+            if (n >= 10) {
+                cell[i][j].value = 0;
+                return 1;
+            }
         }
-        if(solveSudoku(file,i,(j+1)) == 0) { return 0; }
+        if (solveSudoku(file, i, (j + 1)) == 0) {
+            return 0;
+        }
     }
 }
 
@@ -134,14 +155,15 @@ int main()
     FILE *file;
     int n;
     file = NULL;
-    enterSudoku(file,"input.txt");
-    n = solveSudoku(file,0,0);
-    if(n == 1){
+    enterSudoku(file, "input.txt");
+    n = solveSudoku(file, 0, 0);
+    if (n == 1) {
         puts("Bad sudoku");
         return 0;
     }
+
     else {
-        displaySudoku(file,"output.txt");
+        displaySudoku(file, "output.txt");
     }
     return 0;
 }
